@@ -1,32 +1,34 @@
 # Power Flow Refined
 
-Energiefluss-Karte für Home Assistant: Solar, Netz, Batterie und Haus als Kreise mit offenem Ring (256°), animierten Flusslinien und optionalen Zusatzkreisen (E-Auto, Wärmepumpe, …). Alle Farben kommen aus dem Theme „Power Flow“ (`--pf-*`, `--energy-*`), die Karte folgt damit Hell/Dunkel und allen Akzent-Varianten.
+🇬🇧 English · 🇩🇪 [Deutsch](README.de.md)
+
+An energy flow card for Home Assistant: solar, grid, battery and home as circles with an open ring (256°), animated flow lines and optional extra circles (EV, heat pump, …). All colors come from the "Power Flow" theme (`--pf-*`, `--energy-*`), so the card follows light/dark mode and every accent variant.
 
 ![Power Flow Refined](docs/preview.svg)
 
-## Installation über HACS
+## Installation via HACS
 
-1. HACS öffnen → Menü (⋮) → **Benutzerdefinierte Repositories**.
-2. `https://github.com/wattie2k1/power-flow-refined` eintragen, Kategorie **Dashboard** wählen.
-3. „Power Flow Refined“ installieren und die Seite neu laden. HACS legt die Ressource selbst an.
+1. Open HACS → menu (⋮) → **Custom repositories**.
+2. Add `https://github.com/wattie2k1/power-flow-refined` with category **Dashboard**.
+3. Install "Power Flow Refined" and reload the page. HACS registers the resource for you.
 
-Design und Plan: `docs/superpowers/specs/` und `docs/superpowers/plans/`.
+Design and plan (German): `docs/superpowers/specs/` and `docs/superpowers/plans/`.
 
-## Manuell bauen und installieren
+## Manual build and install
 
 ```bash
 npm install
 npm test
-./scripts/deploy.sh        # baut und kopiert nach /config/www/power-flow-refined/ (SSH-Alias "ha")
+./scripts/deploy.sh        # builds and copies to /config/www/power-flow-refined/ (SSH alias "ha")
 ```
 
-Danach die Dashboard-Ressource auf `/local/power-flow-refined/power-flow-refined.js?v=<n>` setzen (Typ `module`) und bei jedem Deploy `<n>` erhöhen: HA liefert `/local/` 31 Tage aus dem Cache.
+Then set the dashboard resource to `/local/power-flow-refined/power-flow-refined.js?v=<n>` (type `module`) and raise `<n>` on every deploy: Home Assistant serves `/local/` with a 31-day cache.
 
-## Konfiguration
+## Configuration
 
 ```yaml
 type: custom:power-flow-refined
-title: Energiefluss
+title: Energy flow
 solar:   { entity: sensor.evcc_pv_power, max: 8000 }
 grid:
   entity: sensor.grid_power
@@ -35,44 +37,45 @@ grid:
 battery: { entity: sensor.evcc_battery_power, soc_entity: sensor.evcc_battery_soc, max: 5000 }
 home:    { entity: sensor.evcc_home_power, max: 10000 }
 extras:
-  - { name: E-Auto, icon: mdi:car-electric, entity: sensor.evcc_go_e_charger_charge_power,
+  - { name: EV, icon: mdi:car-electric, entity: sensor.evcc_go_e_charger_charge_power,
       max: 11000, ring: soc, ring_entity: sensor.evcc_go_e_charger_vehicle_soc }
-  - { name: Wärmepumpe, icon: mdi:heat-pump, entity: sensor.wolflink_c52b_power_consumption_wp_ehz, max: 3000 }
+  - { name: Heat pump, icon: mdi:heat-pump, entity: sensor.wolflink_c52b_power_consumption_wp_ehz, max: 3000 }
 ```
 
-### Darstellung des Solarflusses (`flow_style`)
+### Solar flow view (`flow_style`)
 
-Auf Kartenebene wählbar, Standard ist `classic`:
+Set on the card level, default is `classic`:
 
-| Wert | Darstellung |
+| Value | View |
 |---|---|
-| `classic` | Linien laufen zum Zentrum, ein Ring je Kreis (bisheriges Verhalten) |
-| `ring` | Der Ring von Haus, Zusatzkreisen usw. wird nach Quelle eingefärbt: Solar, Batterie, Netz. Dazu „☀ 41 %“ im Kreis |
-| `lanes` | Zu jedem Verbraucher laufen zwei Spuren, eine für Solar (mit Watt-Angabe) und eine für den Rest |
-| `combined` | `ring` und `lanes` zusammen |
+| `classic` | Lines run to the center, one ring per circle (the original look) |
+| `ring` | The ring of home, extras etc. is colored by source: solar, battery, grid. Plus "☀ 41 %" inside the circle |
+| `lanes` | Two lanes run to every consumer, one for solar (with its wattage) and one for the rest |
+| `combined` | `ring` and `lanes` together |
 
-Die Aufteilung ist rechnerisch: Jede Quelle (Solar, Netzbezug, Batterie-Entladung) wird anteilig auf alle Verbraucher verteilt. Gemessen wird nicht, welcher Strom wohin fließt. Ringe, die den Ladestand zeigen (`ring: soc`, Batterie), werden nicht aufgeteilt.
+The split is calculated, not measured: each source (solar, grid import, battery discharge) is distributed proportionally across all consumers. The card cannot know which electron goes where. Rings that show a state of charge (`ring: soc`, battery) are not split.
 
 ```yaml
 type: custom:power-flow-refined
 flow_style: ring
 ```
 
-| Schlüssel je Kreis | Bedeutung |
+| Key per circle | Meaning |
 |---|---|
-| `entity` | Leistungssensor (W oder kW, nach `unit_of_measurement`) |
-| `max` | Wert für volle Ringfüllung in W (Standard: Solar 8000, Netz 10000, Batterie 5000, Haus 10000, Extras 3000) |
-| `invert` | Vorzeichen umkehren |
-| `subtract_extras` | nur Haus: Leistung der Zusatzkreise vom Hauswert abziehen |
-| `name`, `icon` | Beschriftung und Icon |
-| `export_entity` | nur Netz: Einspeiseleistung |
-| `soc_entity` | nur Batterie: Ladestand, bestimmt den Ring |
-| `ring`, `ring_entity` | nur Extras: `ring: soc` zeigt den Ladestand aus `ring_entity` |
-| `tap_action` | `more-info` (Standard), `navigate` mit `navigation_path`, `none` |
+| `entity` | Power sensor (W or kW, according to `unit_of_measurement`) |
+| `max` | Value in W for a full ring (defaults: solar 8000, grid 10000, battery 5000, home 10000, extras 3000) |
+| `invert` | Flip the sign |
+| `subtract_extras` | Home only: subtract the power of the extra circles from the home value |
+| `name`, `icon` | Label and icon |
+| `color` | Color as the name of a theme variable without `--`, e.g. `pf-purple` (default: color by circle type) |
+| `export_entity` | Grid only: export power |
+| `soc_entity` | Battery only: state of charge, drives the ring |
+| `ring`, `ring_entity` | Extras only: `ring: soc` shows the state of charge from `ring_entity` |
+| `tap_action` | `more-info` (default), `navigate` with `navigation_path`, `none` |
 
-Vorzeichen: Batterie positiv = Entladen, negativ = Laden; Netz positiv = Bezug. Ein Fluss unter 10 W gilt als Ruhe. Fehlt eine Entität oder ist der Zustand `unknown`/`unavailable`/nicht numerisch, zeigt der Kreis grau „–“.
+Signs: battery positive = discharging, negative = charging; grid positive = import. A flow below 10 W counts as idle. If an entity is missing or its state is `unknown`, `unavailable` or not numeric, the circle turns grey and shows "–".
 
-## Bekannte Grenzen
+## Known limitations
 
-- Hell/Dunkel wurde nur über die Theme-Variablen geprüft (alle vorhanden), nicht live im hellen Theme.
-- Die Vorzeichen von `evcc_battery_power` wurden bei 0 W nicht im Betrieb geprüft.
+- Light/dark was only checked through the theme variables (all present), not live in the light theme.
+- The signs of `evcc_battery_power` were not verified in operation at non-zero power.
