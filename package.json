@@ -1,0 +1,32 @@
+{
+  "name": "power-flow-refined",
+  "version": "1.0.0",
+  "description": "Energiefluss-Karte für Home Assistant mit Ringen um jeden Kreis, im Stil des Power-Flow-Themes",
+  "scripts": {
+    "test": "vitest run",
+    "build": "node esbuild.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "home-assistant",
+    "lovelace",
+    "custom-card",
+    "energy",
+    "hacs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wattie2k1/power-flow-refined.git"
+  }
+}
