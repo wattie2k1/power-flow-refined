@@ -40,11 +40,30 @@ extras:
   - { name: Wärmepumpe, icon: mdi:heat-pump, entity: sensor.wolflink_c52b_power_consumption_wp_ehz, max: 3000 }
 ```
 
+### Darstellung des Solarflusses (`flow_style`)
+
+Auf Kartenebene wählbar, Standard ist `classic`:
+
+| Wert | Darstellung |
+|---|---|
+| `classic` | Linien laufen zum Zentrum, ein Ring je Kreis (bisheriges Verhalten) |
+| `ring` | Der Ring von Haus, Zusatzkreisen usw. wird nach Quelle eingefärbt: Solar, Batterie, Netz. Dazu „☀ 41 %“ im Kreis |
+| `lanes` | Zu jedem Verbraucher laufen zwei Spuren, eine für Solar (mit Watt-Angabe) und eine für den Rest |
+| `combined` | `ring` und `lanes` zusammen |
+
+Die Aufteilung ist rechnerisch: Jede Quelle (Solar, Netzbezug, Batterie-Entladung) wird anteilig auf alle Verbraucher verteilt. Gemessen wird nicht, welcher Strom wohin fließt. Ringe, die den Ladestand zeigen (`ring: soc`, Batterie), werden nicht aufgeteilt.
+
+```yaml
+type: custom:power-flow-refined
+flow_style: ring
+```
+
 | Schlüssel je Kreis | Bedeutung |
 |---|---|
 | `entity` | Leistungssensor (W oder kW, nach `unit_of_measurement`) |
 | `max` | Wert für volle Ringfüllung in W (Standard: Solar 8000, Netz 10000, Batterie 5000, Haus 10000, Extras 3000) |
 | `invert` | Vorzeichen umkehren |
+| `subtract_extras` | nur Haus: Leistung der Zusatzkreise vom Hauswert abziehen |
 | `name`, `icon` | Beschriftung und Icon |
 | `export_entity` | nur Netz: Einspeiseleistung |
 | `soc_entity` | nur Batterie: Ladestand, bestimmt den Ring |

@@ -28,6 +28,13 @@ function watchedEntities(node: NormalizedNode): string[] {
   );
 }
 
+/** Kleines Sonnen-Icon (ha-icon), links neben Text. */
+function sunIcon(x: number, y: number, size: number) {
+  return svg`<foreignObject x=${x} y=${y} width=${size} height=${size}>
+    <ha-icon class="sun" .icon=${'mdi:white-balance-sunny'}></ha-icon>
+  </foreignObject>`;
+}
+
 function fire(el: HTMLElement, type: string, detail: unknown) {
   el.dispatchEvent(new CustomEvent(type, { detail, bubbles: true, composed: true }));
 }
@@ -100,13 +107,14 @@ export class PowerFlowRefined extends LitElement {
         svg`<path class="flow ${cls}" d=${path(both ? offsetPolyline(pts, d) : pts)}></path>`;
       let label: unknown = nothing;
       if (solarOn) {
-        const p = pts.length > 2 ? labelPoint([pts[1], pts[2]], 0.5) : labelPoint(pts, 0.6);
+        const p = pts.length > 2 ? labelPoint([pts[1], pts[2]], 0.5) : labelPoint(pts, 0.4);
         const f = formatPower(share.solarWatts, 'W', lang);
-        const text = `\u2600\uFE0E ${f.text} ${f.unit}`;
-        const w = text.length * 6.4 + 10;
+        const text = `${f.text} ${f.unit}`;
+        const w = text.length * 6.4 + 28;
         label = svg`<g class="lane-label">
           <rect x=${p.x - w / 2} y=${p.y - 8} width=${w} height="16" rx="8"></rect>
-          <text x=${p.x} y=${p.y + 4}>${text}</text>
+          ${sunIcon(p.x - w / 2 + 6, p.y - 6, 12)}
+          <text x=${p.x - w / 2 + 22} y=${p.y + 4}>${text}</text>
         </g>`;
       }
       return svg`
@@ -168,7 +176,7 @@ export class PowerFlowRefined extends LitElement {
         ${s.soc !== undefined
           ? svg`<text class="sub" x=${cx} y=${cy + r - 2}>${Math.round(s.soc)} %</text>`
           : split
-            ? svg`<text class="sub solar-share" x=${cx} y=${cy + r - 2}>\u2600\uFE0E ${Math.round(mix!.solar * 100)} %</text>`
+            ? svg`${sunIcon(cx - 19, cy + r - 13, 12)}<text class="sub solar-share" x=${cx - 5} y=${cy + r - 2}>${Math.round(mix!.solar * 100)} %</text>`
             : nothing}
         <text class="name" x=${cx} y=${cy + r + (node.kind === 'extra' ? 16 : 20)}>${node.name}</text>
       </g>`;

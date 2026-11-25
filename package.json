@@ -1,6 +1,6 @@
 {
   "name": "power-flow-refined",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Energiefluss-Karte für Home Assistant mit Ringen um jeden Kreis, im Stil des Power-Flow-Themes",
   "scripts": {
     "test": "vitest run",

@@ -53,7 +53,11 @@ export const cardStyles = css`
     fill: var(--energy-solar-color, var(--pf-ring-accent));
     font-size: 11px;
     font-weight: 700;
-    text-anchor: middle;
+    text-anchor: start;
+  }
+  .sun {
+    color: var(--energy-solar-color, var(--pf-ring-accent));
+    --mdc-icon-size: 12px;
   }
   @keyframes flow {
     to {
@@ -125,6 +129,7 @@ export const cardStyles = css`
     stroke-linecap: butt;
   }
   .sub.solar-share {
+    text-anchor: start;
     fill: var(--energy-solar-color, var(--pf-ring-text-2));
     font-weight: 600;
   }
