@@ -2,6 +2,8 @@
 
 Energiefluss-Karte für Home Assistant: Solar, Netz, Batterie und Haus als Kreise mit offenem Ring (256°), animierten Flusslinien und optionalen Zusatzkreisen (E-Auto, Wärmepumpe, …). Alle Farben kommen aus dem Theme „Power Flow“ (`--pf-*`, `--energy-*`), die Karte folgt damit Hell/Dunkel und allen Akzent-Varianten.
 
+![Power Flow Refined](docs/preview.svg)
+
 ## Installation über HACS
 
 1. HACS öffnen → Menü (⋮) → **Benutzerdefinierte Repositories**.
