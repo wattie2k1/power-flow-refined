@@ -1,4 +1,4 @@
-import type { CardConfig, NodeConfig, NodeKind, NormalizedConfig, NormalizedNode } from '../types';
+import type { CardConfig, FlowStyle, NodeConfig, NodeKind, NormalizedConfig, NormalizedNode } from '../types';
 
 const DEFAULTS: Record<NodeKind, { name: string; icon: string; max: number }> = {
   solar: { name: 'Solar', icon: 'mdi:solar-power', max: 8000 },
@@ -8,6 +8,7 @@ const DEFAULTS: Record<NodeKind, { name: string; icon: string; max: number }> = 
   extra: { name: 'Zusatz', icon: 'mdi:flash', max: 3000 },
 };
 
+const STYLES: FlowStyle[] = ['classic', 'ring', 'lanes', 'combined'];
 const MAIN: Array<Exclude<NodeKind, 'extra'>> = ['solar', 'grid', 'battery', 'home'];
 
 /** Nur Theme-Variablennamen zulassen (kein Hex, keine freien CSS-Werte). */
@@ -44,5 +45,9 @@ export function normalizeConfig(raw: CardConfig): NormalizedConfig {
   if (nodes.length === 0) {
     throw new Error('Mindestens ein Kreis mit einer Entität muss konfiguriert sein (z. B. home.entity).');
   }
-  return { title: raw.title, nodes };
+  const style = raw.flow_style ?? 'classic';
+  if (!STYLES.includes(style)) {
+    throw new Error(`flow_style muss einer von ${STYLES.join(', ')} sein (war: ${String(style)}).`);
+  }
+  return { title: raw.title, flow_style: style, nodes };
 }

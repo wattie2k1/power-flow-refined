@@ -21,3 +21,15 @@ export function arcPath(cx: number, cy: number, r: number, fraction: number): st
   const f = (n: number) => +n.toFixed(3);
   return `M ${f(start.x)} ${f(start.y)} A ${r} ${r} 0 ${large} 1 ${f(end.x)} ${f(end.y)}`;
 }
+
+/** Teilstück des Rings von Anteil `from` bis `to` (je 0–1). */
+export function arcSegment(cx: number, cy: number, r: number, from: number, to: number): string {
+  const a = Math.min(1, Math.max(0, from));
+  const b = Math.min(1, Math.max(0, to));
+  if (!(b > a)) return '';
+  const start = polar(cx, cy, r, RING_START_DEG + a * RING_SWEEP_DEG);
+  const end = polar(cx, cy, r, RING_START_DEG + b * RING_SWEEP_DEG);
+  const large = (b - a) * RING_SWEEP_DEG > 180 ? 1 : 0;
+  const f = (n: number) => +n.toFixed(3);
+  return `M ${f(start.x)} ${f(start.y)} A ${r} ${r} 0 ${large} 1 ${f(end.x)} ${f(end.y)}`;
+}

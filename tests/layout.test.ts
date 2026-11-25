@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { normalizeConfig } from '../src/logic/config';
-import { layoutHeight, layoutHub, layoutNodes } from '../src/logic/layout';
+import { labelPoint, layoutHeight, layoutHub, layoutNodes, offsetPolyline } from '../src/logic/layout';
 
 const cfg = (extra = 0, main: string[] = ['solar', 'grid', 'battery', 'home']) =>
   normalizeConfig({
@@ -99,5 +99,26 @@ describe('Verbinder (I2)', () => {
   test('nur Extras: keine Verbinder (M6)', () => {
     const l = layoutNodes(cfg(3, []));
     for (const n of l) expect(connectorPoints(l, n.key)).toEqual([]);
+  });
+});
+
+describe('offsetPolyline', () => {
+  test('gerade Linie wird senkrecht verschoben', () => {
+    const r = offsetPolyline([{ x: 0, y: 0 }, { x: 10, y: 0 }], 2);
+    expect(r[0].x).toBeCloseTo(0);
+    expect(r[0].y).toBeCloseTo(2);
+    expect(r[1].y).toBeCloseTo(2);
+  });
+  test('rechter Winkel: beide Schenkel behalten den Abstand 2', () => {
+    const r = offsetPolyline([{ x: 0, y: 0 }, { x: 0, y: 10 }, { x: 10, y: 10 }], 2);
+    expect(r[0].x).toBeCloseTo(-2);
+    expect(r[1]).toMatchObject({ x: expect.closeTo(-2), y: expect.closeTo(12) });
+    expect(r[2].y).toBeCloseTo(12);
+  });
+  test('negativer Abstand verschiebt auf die andere Seite', () =>
+    expect(offsetPolyline([{ x: 0, y: 0 }, { x: 10, y: 0 }], -2)[0].y).toBeCloseTo(-2));
+  test('labelPoint liegt auf der Linie', () => {
+    const p = labelPoint([{ x: 0, y: 0 }, { x: 100, y: 0 }], 0.6);
+    expect(p).toEqual({ x: 60, y: 0 });
   });
 });

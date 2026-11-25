@@ -78,3 +78,48 @@ export function connectorPoints(layout: LaidOutNode[], key: string): Array<{ x: 
   const busY = Math.max(...main.map((n) => n.cy + n.r)) + BUS_GAP;
   return [start, { x: hub.cx, y: busY }, { x: node.cx, y: busY }, { x: node.cx, y: node.cy }];
 }
+
+type Pt = { x: number; y: number };
+
+/** Verschiebt einen Linienzug um `d` zur Seite (positiv = links der Laufrichtung in SVG-Koordinaten), Ecken mit Gehrung. */
+export function offsetPolyline(points: Pt[], d: number): Pt[] {
+  const normals: Pt[] = [];
+  for (let i = 0; i < points.length - 1; i++) {
+    const dx = points[i + 1].x - points[i].x;
+    const dy = points[i + 1].y - points[i].y;
+    const len = Math.hypot(dx, dy) || 1;
+    normals.push({ x: -dy / len, y: dx / len });
+  }
+  return points.map((p, i) => {
+    if (i === 0) return { x: p.x + normals[0].x * d, y: p.y + normals[0].y * d };
+    if (i === points.length - 1) {
+      const n = normals[normals.length - 1];
+      return { x: p.x + n.x * d, y: p.y + n.y * d };
+    }
+    const a = normals[i - 1];
+    const b = normals[i];
+    const sx = a.x + b.x;
+    const sy = a.y + b.y;
+    const sl = Math.hypot(sx, sy) || 1;
+    const m = { x: sx / sl, y: sy / sl };
+    const k = d / (m.x * a.x + m.y * a.y || 1);
+    return { x: p.x + m.x * k, y: p.y + m.y * k };
+  });
+}
+
+/** Punkt bei Anteil `t` (0–1) der Gesamtlänge des Linienzugs. */
+export function labelPoint(points: Pt[], t: number): Pt {
+  const lens = points.slice(1).map((p, i) => Math.hypot(p.x - points[i].x, p.y - points[i].y));
+  let rest = lens.reduce((a, b) => a + b, 0) * t;
+  for (let i = 0; i < lens.length; i++) {
+    if (rest <= lens[i] || i === lens.length - 1) {
+      const f = lens[i] ? rest / lens[i] : 0;
+      return {
+        x: points[i].x + (points[i + 1].x - points[i].x) * f,
+        y: points[i].y + (points[i + 1].y - points[i].y) * f,
+      };
+    }
+    rest -= lens[i];
+  }
+  return points[0];
+}

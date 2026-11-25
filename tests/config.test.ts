@@ -61,3 +61,13 @@ describe('color (I3)', () => {
   test.each(['#ff0000', 'rgb(1,2,3)', 'red; background: x', '', 42])('ungültig: %s', (v) =>
     expect(c(v)).toBeUndefined());
 });
+
+describe('flow_style', () => {
+  const home = { entity: 'sensor.h' };
+  test('Standard ist classic', () =>
+    expect(normalizeConfig({ ...base, home }).flow_style).toBe('classic'));
+  test.each(['classic', 'ring', 'lanes', 'combined'] as const)('%s wird übernommen', (s) =>
+    expect(normalizeConfig({ ...base, home, flow_style: s }).flow_style).toBe(s));
+  test('unbekannter Wert ergibt einen deutschen Fehler', () =>
+    expect(() => normalizeConfig({ ...base, home, flow_style: 'bunt' as never })).toThrow(/flow_style/));
+});

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { arcPath, polar, ringFraction } from '../src/logic/ring';
+import { arcPath, arcSegment, polar, ringFraction } from '../src/logic/ring';
 
 describe('ringFraction', () => {
   test('Hälfte', () => expect(ringFraction(5000, 10000)).toBe(0.5));
@@ -32,4 +32,13 @@ describe('arcPath', () => {
   });
   test('Viertel (64 Grad) hat Large-Arc-Flag 0', () =>
     expect(arcPath(0, 0, 10, 0.25)).toMatch(/A 10 10 0 0 1 /));
+});
+
+describe('arcSegment', () => {
+  test('von 0 entspricht arcPath', () => expect(arcSegment(0, 0, 10, 0, 0.4)).toBe(arcPath(0, 0, 10, 0.4)));
+  test('leeres Stück gibt leeren Pfad', () => expect(arcSegment(0, 0, 10, 0.3, 0.3)).toBe(''));
+  test('beginnt dort, wo das vorige Stück endet', () => {
+    const first = arcPath(0, 0, 10, 0.3).split(' ').slice(-2).join(' ');
+    expect(arcSegment(0, 0, 10, 0.3, 0.6).startsWith(`M ${first}`)).toBe(true);
+  });
 });

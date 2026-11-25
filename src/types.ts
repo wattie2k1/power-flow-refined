@@ -26,8 +26,12 @@ export interface NodeConfig {
   tap_action?: TapAction;
 }
 
+export type FlowStyle = 'classic' | 'ring' | 'lanes' | 'combined';
+
 export interface CardConfig {
   type: string;
+  /** Darstellung des Solarflusses */
+  flow_style?: FlowStyle;
   title?: string;
   solar?: NodeConfig;
   grid?: NodeConfig;
@@ -47,5 +51,6 @@ export interface NormalizedNode extends NodeConfig {
 
 export interface NormalizedConfig {
   title?: string;
+  flow_style: FlowStyle;
   nodes: NormalizedNode[];
 }

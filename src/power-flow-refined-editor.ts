@@ -164,6 +164,29 @@ export class PowerFlowRefinedEditor extends LitElement {
           }}
         ></ha-selector>
       </div>
+      <div class="fields" style="margin-bottom: 12px">
+        <ha-selector
+          .hass=${this.hass}
+          .label=${'Darstellung des Solarflusses'}
+          .required=${false}
+          .selector=${{
+            select: {
+              mode: 'dropdown',
+              options: [
+                { value: 'classic', label: 'Klassisch (Linien zum Zentrum)' },
+                { value: 'ring', label: 'Ring zeigt Solar-Anteil' },
+                { value: 'lanes', label: 'Solar-Spuren mit Watt' },
+                { value: 'combined', label: 'Ring und Spuren kombiniert' },
+              ],
+            },
+          }}
+          .value=${cfg.flow_style ?? 'classic'}
+          @value-changed=${(e: CustomEvent) => {
+            e.stopPropagation();
+            this._commit(setField(cfg, ['flow_style'], e.detail.value));
+          }}
+        ></ha-selector>
+      </div>
       ${SECTIONS.map(
         (s) => html`
           <details ?open=${!!cfg[s.key]?.entity}>

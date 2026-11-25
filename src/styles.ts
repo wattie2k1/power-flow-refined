@@ -41,6 +41,20 @@ export const cardStyles = css`
     stroke-dasharray: 1 13;
     animation: flow 1.2s linear infinite;
   }
+  .flow.solar {
+    stroke: var(--energy-solar-color, var(--pf-ring-accent));
+  }
+  .lane-label rect {
+    fill: var(--pf-ring-surface);
+    stroke: var(--pf-ring-track);
+    stroke-width: 1;
+  }
+  .lane-label text {
+    fill: var(--energy-solar-color, var(--pf-ring-accent));
+    font-size: 11px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
   @keyframes flow {
     to {
       stroke-dashoffset: -14;
@@ -97,6 +111,22 @@ export const cardStyles = css`
   .fill {
     stroke: var(--c);
     transition: stroke 0.25s;
+  }
+  .seg.solar {
+    stroke: var(--energy-solar-color, var(--pf-ring-accent));
+  }
+  .seg.battery {
+    stroke: var(--energy-battery-out-color, var(--pf-ring-accent));
+  }
+  .seg.grid {
+    stroke: var(--energy-grid-consumption-color, var(--pf-ring-accent));
+  }
+  .fill.seg {
+    stroke-linecap: butt;
+  }
+  .sub.solar-share {
+    fill: var(--energy-solar-color, var(--pf-ring-text-2));
+    font-weight: 600;
   }
   .node.extra .track,
   .node.extra .fill {
